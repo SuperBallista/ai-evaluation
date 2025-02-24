@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": true,
+    "types": ["svelte"], // Svelte 프로젝트에서 필요
+    "baseUrl": "./",
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.svelte",
+    "node_modules/svelte-routing",
+    "src/type/**/*.d.ts" // 타입 선언 파일 포함
+  ]
+}

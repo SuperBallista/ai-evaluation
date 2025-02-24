@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+
+.bg-main {
+  background-color: #8D6E63; /* 메인 브라운 */
+}
+
+.bg-sub1 {
+  background-color: #6D4C41; /* 어두운 브라운 */
+}
+
+.bg-sub2 {
+  background-color: #A1887F; /* 연한 브라운 */
+}
+
+.bg-sub3 {
+  background-color: #D7CCC8; /* 베이지 */
+}
+
+.bg-main-bg1 {
+  background-color: #FFF8E1; /* 크림톤 */
+}
+
+.bg-main-bg2 {
+  background-color: #F5E1DA; /* 밝은 베이지 */
+}
+
+.bg-main-bg3 {
+  background-color: #E0D7C6; /* 중간 베이지 */
+}
+
+.text-default {
+  color: #2E2E2E; /* 깊은 브라운 */
+}
+
+.text-mute {
+  color: #A0A0A0 ; /* 흐린 브라운 */
+}
+
+.text-accent {
+  color: #D84315; /* 강조 오렌지 레드 */
+}
+
+.btn-accent {
+  background-color: #D84315; /* 강조 버튼 (딥 오렌지) */
+  color: #2E2E2E;
+}
+
+.btn-accent:hover {
+  background-color: #BF360C; /* 강조 버튼 마우스 오버 */
+}
+
+.btn-default {
+  background-color: #8D6E63; /* 일반 버튼 (메인 브라운) */
+  color: #2E2E2E;
+}
+
+.btn-default:hover {
+  background-color: #6D4C41; /* 일반 버튼 마우스 오버 */
+}
