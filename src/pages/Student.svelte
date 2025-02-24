@@ -8,6 +8,30 @@
     let id = params.get("id");
     let session = params.get("session");
     let questions:{title:string,answerSheet:{format:answerFormatType,counts?:number}[]} = {title:"",answerSheet:[]}
+    let selectedStudent:number
+    let studentList:{number:number, name:string}[] = []
+    let answer: string[]=[];
+
+
+    async function fetchStudent() {
+      if (!session){
+        return
+      }
+      try{
+        const response = await fetch(`/api/student?session=${session}`,{
+          method:"GET",
+        })
+        if (response.status===200){
+          studentList = await response.json()
+        } else {
+          const data:{message:string} = await response.json()
+            showMessageBox("error","에러 발생", data.message);
+        }
+      }catch (error) {
+        showMessageBox("error", "에러 발생", "서버 에러 :" + error)
+      }
+      
+    }
 
     async function fetchQuestion() {
         if (!id || !session) 
@@ -22,7 +46,7 @@
 
         if (response.status===200){
           showMessageBox("success","로딩 중", "답안지를 불러오고 있습니다")
-          questions = await response.json()
+          questions = {...await response.json()}
         } else{
             const data:{message:string} = await response.json()
             showMessageBox("error","에러 발생", data.message);
@@ -35,11 +59,39 @@
   
     onMount(() => {
 (async () => {
-await fetchQuestion()
+await fetchQuestion();
+await fetchStudent();
 })();
 });
 
-    
+async function fetchAnswer() {
+  if (!id || !session || selectedStudent === undefined) {
+    showMessageBox("error", "에러 발생", "필수 데이터가 부족합니다");
+    return;
+  }
+  const fetchData = {
+    questionsId: id,
+    session,
+    student:selectedStudent,
+    answer
+  };
+try{
+  const response = await fetch("/api/submit",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+
+    body:JSON.stringify(fetchData)
+  });
+  if (response.status===201){
+    showMessageBox("success", "제출 성공", "답안이 성공적으로 제출되었습니다.");
+  } else {
+    const data = await response.json();
+    showMessageBox("error", "제출 실패", data.message);
+  }
+} catch (error){
+  showMessageBox("error", "서버 오류", "제출 중 오류 발생: " + error);
+} 
+}
 
   </script>
   <svelte:head>
@@ -53,19 +105,15 @@ await fetchQuestion()
   
     <!-- ✅ 시험지 기본 정보 입력 -->
     <div class="mb-4">
-      <label class="block text-default font-medium">번호</label>
-      <select class="p-2 border border-gray-300 rounded-lg w-full mt-1">
-        <option value="">번호 입력</option>
-        {#each Array(50).fill(0) as _, i}
-          <option value={i + 1}>{i + 1}</option>
-        {/each}
-      </select>
-    </div>
+      <label class="block text-default font-medium">반번호</label>
+      <input type="number" bind:value={selectedStudent} class="p-2 border border-gray-300 rounded-lg w-full mt-1"/>
+      </div>
   
     <div class="mb-4">
-      <label class="block text-default font-medium">이름</label>
-      <input type="text" class="p-2 border border-gray-300 rounded-lg w-full mt-1" placeholder="이름을 입력하세요" />
-    </div>
+      <span class="p-2 border border-gray-300 rounded-lg w-full mt-1">
+        {studentList[selectedStudent] ? studentList[selectedStudent].name : "반번호를 바르게 입력하세요"}
+    </span>
+        </div>
   
     <hr class="border-main-bg2 my-4" />
   
@@ -76,7 +124,7 @@ await fetchQuestion()
   
         <!-- ✅ 선택형 (Select) -->
         {#if question.format === "select" && question.counts}
-          <select class="p-2 border border-gray-300 rounded-lg w-full">
+          <select bind:value={answer[index]} class="p-2 border border-gray-300 rounded-lg w-full">
               {#each Array.from({ length: question.counts }, (_, i) => i + 1) as option}
                   <option value={option}>{option}</option>
               {/each}
@@ -84,17 +132,17 @@ await fetchQuestion()
   
         <!-- ✅ 단답형 (Input) -->
         {:else if question.format === "input"}
-          <input type="text" class="p-2 border border-gray-300 rounded-lg w-full" placeholder="정답 입력" />
+          <input bind:value={answer[index]} type="text" class="p-2 border border-gray-300 rounded-lg w-full" placeholder="정답 입력" />
   
         <!-- ✅ 서술형 (Textarea) -->
         {:else if question.format === "textarea"}
-          <textarea class="p-2 border border-gray-300 rounded-lg w-full" rows="5" placeholder="서술형 정답 입력"></textarea>
+          <textarea bind:value={answer[index]} class="p-2 border border-gray-300 rounded-lg w-full" rows="5" placeholder="서술형 정답 입력"></textarea>
         {/if}
       </div>
     {/each}
   
     <!-- ✅ 제출 버튼 -->
-    <button class="cursor-pointer w-full text-default py-2 rounded-lg mt-4 btn-accent">
+    <button on:click={fetchAnswer} class="cursor-pointer w-full text-default py-2 rounded-lg mt-4 btn-accent">
       제출하기
     </button>
   </div>

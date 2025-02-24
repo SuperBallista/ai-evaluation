@@ -1,6 +1,6 @@
 <script lang="ts">
     import { answerFormatType } from "../../lib/type/answer";
-    import { answerSheet, correctAnswer } from "../../lib/store/pageStore";
+    import { answerSheet, correctAnswer, editQuestion } from "../../lib/store/pageStore";
     import { onMount } from "svelte";
 
     export let questionCount: number;
@@ -16,10 +16,12 @@
         correctAnswer.update(() => modelAnswers);
     }
 
-    let answerFormats: answerFormatType[] = Array(questionCount).fill("select");
-    let choiceCounts: number[] = Array(questionCount).fill(2); // ✅ 기본값 2로 설정
-    let choices: number[][] = Array.from({ length: questionCount }, () => Array.from({ length: 2 }, (_, i) => i + 1));
-    let modelAnswers: string[] = Array(questionCount).fill("");
+    let answerFormats: answerFormatType[] = $editQuestion?.answerSheet.map(item => item.format) || Array(questionCount).fill("select");
+    let choiceCounts: number[] = $editQuestion?.answerSheet.map(item => item.counts) || Array(questionCount).fill(2); // ✅ 기본값 2로 설정
+    let choices: number[][] = [...Array(questionCount)].map((_, i) => 
+    [...Array(choiceCounts[i] || 2)].map((_, j) => j + 1)
+    );
+    let modelAnswers: string[] = $editQuestion?.correctAnswer || Array(questionCount).fill("");
 
     function updateAnswerFormat(index: number, event: Event): void {
         const target = event.target as HTMLSelectElement;

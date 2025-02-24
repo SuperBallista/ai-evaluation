@@ -39,7 +39,7 @@
 
 <script lang="ts">
     import { checkDateTime } from "../../lib/date/formatDate";
-    import { qrCode } from "../../lib/store/pageStore";
+    import { editQuestion, qrCode, viewMain } from "../../lib/store/pageStore";
     import { showMessageBox } from "../../lib/custom/customStore";
     import QRcode from "../../pages/teacher/QRcode.svelte";
     import { mount } from "svelte";
@@ -47,7 +47,6 @@
     export let ListData:{ id:number, title: string; date: Date }[]
 
     // 평가 열기
-
 async function openEvaluation(id: number) {
     try {
         const response = await fetch(`/api/question/qrcode?id=${id}`, {
@@ -109,16 +108,53 @@ async function openEvaluation(id: number) {
 
 
 // 평가 수정
-    function editEvaluation(id:number) {
-        console.log(`평가지 ${id} 수정`);
-        // TODO: 수정 페이지로 이동 또는 모달 표시
+  async  function editEvaluation(id:number) {
+        try{
+            const response = await fetch(`/api/question/edit/${id}`,{
+                method: "GET",
+                credentials: "include",
+            });
+            if (response.status===200){
+                showMessageBox("success","자료 불러오기", "자료를 불러오고 있습니다")
+             const data = await response.json()
+             editQuestion.set(data);
+             viewMain.set("upload");
+            } else{
+                const data:{message:string} = await response.json()
+            showMessageBox("error","에러 발생", data.message);
+            }
+        }
+        catch (error){
+            showMessageBox("error", "에러 발생", "서버 에러 :" + error)
+        }
+       
+
     }
 
     // 평가 삭제
-    function deleteEvaluation(id:number) {
-        if (confirm("정말 삭제하시겠습니까?")) {
-            console.log(`평가지 ${id} 삭제`);
-            // TODO: 삭제 API 호출 및 목록 갱신
+ async function deleteEvaluation(id:number) {
+    
+    const userResponse = await showMessageBox("confirm","삭제 확인", "평가지를 삭제하시겠습니까?")
+    if (!userResponse.success){return}
+    try{
+        const response = await fetch("/api/question",{
+            method: "DELETE",
+            credentials: "include",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({id})
+        })
+        if (response.status===200){ 
+            showMessageBox("success","삭제 성공","평가지를 삭제하였습니다")
+            ListData = [...ListData.filter(data => data.id !== id)];
+        } else {
+            const data:{message:string} = await response.json()
+            showMessageBox("error","에러 발생", data.message);
         }
     }
+    catch (error){
+        showMessageBox("error", "에러 발생", "서버 에러 :" + error)
+    }
+}
 </script>

@@ -3,13 +3,13 @@
     import { showMessageBox } from "../../lib/custom/customStore";
     import { onMount } from "svelte";
     import mammoth from "mammoth";
-    import { answerSheet, correctAnswer, viewMain } from "../../lib/store/pageStore";
+    import { answerSheet, correctAnswer, editQuestion, viewMain } from "../../lib/store/pageStore";
     import { questionDataDto } from "../../lib/type/answer";
 
 
     // ✅ 파일 업로드 상태
     let file: File | null = null;
-    let extractedText: string = "";
+    let extractedText: string = $editQuestion?.content || "";
 
     function handleFileUpload(event: Event): void {
         const target = event.target as HTMLInputElement;
@@ -34,11 +34,11 @@
     }
 
     // ✅ 제목 입력 상태
-    let title: string = "";
+    let title: string = $editQuestion?.title || "";
 
     // ✅ 과목 선택 상태
     let subjects:string[];
-    let selectedSubject: string;
+    let selectedSubject: string = "";
 
 async function fetchSubject() {
     try{
@@ -58,14 +58,16 @@ async function fetchSubject() {
     }
 }
 
-
-
+if ($editQuestion?.correctAnswer){
+    correctAnswer.set($editQuestion?.correctAnswer)
+}
     // ✅ 문제 갯수 설정
-    let questionCount: number = 1;
+    let questionCount: number = $editQuestion?.answerSheet.length || 1;
 
     // ✅ 저장 버튼 클릭 이벤트
    async function saveData() {
     const fetchData:questionDataDto = {
+        id: $editQuestion?.id || undefined,
         subjectName: selectedSubject,
         title: title,
         comment: "",
@@ -101,7 +103,7 @@ async function fetchSubject() {
 
         (async () => {
             await fetchSubject();
-            selectedSubject =  subjects[0]
+            selectedSubject = $editQuestion?.subjectName || subjects[0]
         })();
     });
 
