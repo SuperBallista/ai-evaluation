@@ -1,6 +1,6 @@
 <script lang="ts">
     import QRCode from "qrcode";
-    import { qrCode } from "../../lib/store/pageStore";
+    import { qrCode } from "@lib/store/pageStore";
   
     let qrImage: string | null = null;
     let copied = false; // 복사 완료 메시지 표시 여부

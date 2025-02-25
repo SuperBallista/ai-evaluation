@@ -1,9 +1,10 @@
 <script lang="ts">
-    import { showMessageBox } from "../../lib/custom/customStore";
-    import { teacherInfo } from "../../lib/store/userStore";
+    import { studentDto } from "@lib/type/answer";
+    import { showMessageBox } from "@lib/custom/customStore";
+    import { teacherInfo } from "@lib/store/userStore";
     import { onMount } from "svelte";
 
-let allStudentList:{name:string, number:number}[] = []
+let allStudentList:studentDto[] = []
 
 async function fetchData() {
 try{
@@ -11,11 +12,9 @@ try{
         credentials:"include",
         method:"GET"
     })
-    if(response.status===200){
-    allStudentList = await response.json()
-    } else if (response.status===204){
-        allStudentList = []
-    } else{
+    if(response.ok){
+    allStudentList = await response.json() || []
+    }  else{
         const errorData = await response.json()
         showMessageBox("error","에러 발생", errorData.message);
     }
@@ -34,7 +33,7 @@ try{
         },
         body: JSON.stringify(allStudentList)
     })
-    if (response.status===201){
+    if (response.ok){
         showMessageBox("success","저장 성공","학생 명단 저장에 성공하였습니다")
     } else{
         const errorData = await response.json()
@@ -64,7 +63,6 @@ onMount(() => {
 
 </script>
 
-<div class="flex flex-col items-center justify-center min-h-screen p-6">
 
 <div class="max-w-2xl w-full bg-main-bg3 shadow-md rounded-lg p-6 mt-6">
     <h2 class="text-lg font-semibold text-default mb-4">평가 학생 명단</h2>
@@ -96,6 +94,4 @@ onMount(() => {
     </tbody>
     </table>
     <button on:click={saveData} class="w-full btn-accent text-default px-4 py-2 rounded-lg cursor-pointer">변경사항 저장</button>
-</div>
-
 </div>

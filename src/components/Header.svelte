@@ -8,9 +8,9 @@
     </nav>
   </header>
   <script lang="ts">
-    import { teacherInfo } from "../lib/store/userStore";
-    import { showMessageBox } from "../lib/custom/customStore";
-    import { editQuestion, viewMain } from "../lib/store/pageStore";
+    import { teacherInfo } from "@lib/store/userStore";
+    import { showMessageBox } from "@lib/custom/customStore";
+    import { editQuestion, viewMain } from "@lib/store/pageStore";
 
     async function logout() {
       const userResponse = await showMessageBox("confirm","로그아웃 확인", "지금 로그아웃을 하면 학생들은 작성중인 답안을 제출할 수 없습니다. 로그아웃 하시겠습니까?")      
@@ -20,7 +20,7 @@
           method:"DELETE",
           credentials: "include"
         })
-        if (response.status===200){
+        if (response.ok){
           showMessageBox("success", "로그아웃 성공", "로그아웃하였습니다")
           teacherInfo.set(null)
         }

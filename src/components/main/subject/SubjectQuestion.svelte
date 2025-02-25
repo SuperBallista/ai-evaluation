@@ -1,15 +1,53 @@
-<script lang="ts">
-    import { editQuestion, qrCode, viewMain } from "../../lib/store/pageStore";
-    import { showMessageBox } from "../../lib/custom/customStore";
-    import { checkDateTime } from "../../lib/date/formatDate";
-    import { mount, onMount } from "svelte";
-    import QRcode from "../../pages/teacher/QRcode.svelte";
-    import StudentList from "./StudentList.svelte";
+<!-- ✅ 평가지 테이블 -->
+<div class="max-w-2xl w-full bg-main-bg3 shadow-md rounded-lg p-6 mt-6">
+    <h2 class="text-lg font-semibold text-default mb-4">평가지 목록</h2>
+    <table class="w-full border-collapse border border-gray-300">
+        <thead class="bg-sub3">
+            <tr>
+                <th class="border p-2">평가지 제목</th>
+                <th class="border p-2">작성일</th>
+                <th class="border p-2">풀기</th>
+                <th class="border p-2">수정</th>
+                <th class="border p-2">삭제</th>
+            </tr>
+        </thead>
+        <tbody>
+            {#each ListData as data}
+                <tr>
+                    <td class="border p-2">{data.title}</td>
+                    <td class="border p-2">{ checkDateTime(data.date) }</td>
+                    <td class="border p-2 text-center">
+                        <button on:click={() => openEvaluation(data.id)} class="cursor-pointer px-3 py-1 text-default rounded-md btn-accent">
+                            풀기
+                        </button>
+                    </td>
+                    <td class="border p-2 text-center">
+                        <button on:click={() => editEvaluation(data.id)} class="cursor-pointer px-3 py-1 text-default rounded-md btn-default">
+                            수정
+                        </button>
+                    </td>
+                    <td class="border p-2 text-center">
+                        <button on:click={() => deleteEvaluation(data.id)} class="cursor-pointer px-3 py-1 text-default rounded-md btn-default">
+                            삭제
+                        </button>
+                    </td>
+                </tr>
+            {/each}
+        </tbody>
+    </table>
+</div>
 
-    let ListData:{ id:number, title: string; date: Date, subject:string }[]
+<script lang="ts">
+    import { checkDateTime } from "@lib/date/formatDate";
+    import { editQuestion, qrCode, viewMain } from "@lib/store/pageStore";
+    import { showMessageBox } from "@lib/custom/customStore";
+    import QRcode from "@pages/teacher/QRcode.svelte";
+    import { mount } from "svelte";
+
+    export let ListData:{ id:number, title: string; date: Date }[]
 
     // 평가 열기
-    async function openEvaluation(id: number) {
+async function openEvaluation(id: number) {
     try {
         const response = await fetch(`/api/question/qrcode?id=${id}`, {
             method: "GET",
@@ -76,7 +114,7 @@
                 method: "GET",
                 credentials: "include",
             });
-            if (response.status===200){
+            if (response.ok){
                 showMessageBox("success","자료 불러오기", "자료를 불러오고 있습니다")
              const data = await response.json()
              editQuestion.set(data);
@@ -107,7 +145,7 @@
             },
             body: JSON.stringify({id})
         })
-        if (response.status===200){ 
+        if (response.ok){ 
             showMessageBox("success","삭제 성공","평가지를 삭제하였습니다")
             ListData = [...ListData.filter(data => data.id !== id)];
         } else {
@@ -119,81 +157,4 @@
         showMessageBox("error", "에러 발생", "서버 에러 :" + error)
     }
 }
-    async function showQuestionList() {
-    try{
-       const response = await fetch("/api/question/list/1",{
-        method:"GET",
-        credentials:"include",
-       })
-       if (response.status===200){
-        const data:{questions_id:number, subjects_name:string, questions_title:string, questions_createdAt:string}[] = await response.json()
-        ListData = data
-    .filter((item) => item.questions_id !== null && item.questions_id !== undefined) // ✅ id가 없는 데이터 제외
-    .map((item) => ({
-        id: item.questions_id,
-        title: item.questions_title,
-        date: new Date(item.questions_createdAt),
-        subject: item.subjects_name
-    }));
-       } else {
-        const errorData = await response.json()
-                    showMessageBox("error","에러 발생", errorData.message);
-       }
-    } catch (error){
-        showMessageBox("error", "에러 발생", "서버 에러 :" + error)
-    }
-    }
-
-    onMount(() => {
-        (async () => {
-            await showQuestionList();
-        })();
-    });
-
-
-
 </script>
-
-
-<div class="flex flex-col items-center justify-center min-h-screen p-6">
-    <StudentList/>
-<div class="max-w-2xl w-full bg-main-bg3 shadow-md rounded-lg p-6 mt-6">
-    <h2 class="text-lg font-semibold text-default mb-4">등록된 평가지</h2>
-    <table class="w-full border-collapse border border-gray-300">
-        <thead class="bg-sub3">
-            <tr>
-                <th class="border p-2">과목</th>
-                <th class="border p-2">평가지 제목</th>
-                <th class="border p-2">작성일</th>
-                <th class="border p-2">풀기</th>
-                <th class="border p-2">수정</th>
-                <th class="border p-2">삭제</th>
-            </tr>
-        </thead>
-        <tbody>
-            {#each ListData as data}
-                <tr>
-                    <td class="border p-2">{data.subject}</td>
-                    <td class="border p-2">{data.title}</td>
-                    <td class="border p-2">{ checkDateTime(data.date) }</td>
-                    <td class="border p-2 text-center">
-                        <button on:click={() => openEvaluation(data.id)} class="cursor-pointer px-3 py-1 text-default rounded-md btn-accent">
-                            풀기
-                        </button>
-                    </td>
-                    <td class="border p-2 text-center">
-                        <button on:click={() => editEvaluation(data.id)} class="cursor-pointer px-3 py-1 text-default rounded-md btn-default">
-                            수정
-                        </button>
-                    </td>
-                    <td class="border p-2 text-center">
-                        <button on:click={() => deleteEvaluation(data.id)} class="cursor-pointer px-3 py-1 text-default rounded-md btn-default">
-                            삭제
-                        </button>
-                    </td>
-                </tr>
-            {/each}
-        </tbody>
-    </table>
-</div>
-</div>

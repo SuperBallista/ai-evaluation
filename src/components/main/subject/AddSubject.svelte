@@ -1,14 +1,13 @@
 <script lang="ts">
-    import { showMessageBox } from "../../lib/custom/customStore";
+    import { showMessageBox } from "@lib/custom/customStore";
     import { onMount } from "svelte";
-    import { writable, type Writable } from "svelte/store";
+    import { defaultSubjects} from "@lib/store/userStore"
     import SubjectQuestion from "./SubjectQuestion.svelte";
 
     // ✅ 기본 과목 목록
-    const defaultSubjects = writable<string[]>([])
     
     // ✅ 선택된 과목
-    let selectedSubject: string = $defaultSubjects[0];
+    let selectedSubject: string = "기타";
 
     // ✅ 직접 입력하는 과목
     let customSubject: string = "";
@@ -23,7 +22,7 @@
             method: "GET",
             credentials: "include"
             })
-            if (response.status===200){
+            if (response.ok){
                 const data:string[] = await response.json()
                 defaultSubjects.set(data)
             }
@@ -51,7 +50,7 @@
                     },
                     body: JSON.stringify(fetchData)
                 })
-                if (response.status===201){
+                if (response.ok){
                     const data:string[] = await response.json()
                     defaultSubjects.set(data)
                     showMessageBox("success","작업 성공","과목을 성공적으로 추가했습니다")
@@ -75,7 +74,7 @@
                     },
                     body: JSON.stringify(fetchData)
                 })
-                if (response.status===200){
+                if (response.ok){
                     const data:string[] = await response.json()
                     defaultSubjects.set(data)
                     showMessageBox("success","작업 성공","과목을 성공적으로 수정했습니다")
@@ -105,7 +104,7 @@
                     },
             body: JSON.stringify(fetchData)
         })
-        if (response.status===200){
+        if (response.ok){
             const data:string[] = await response.json()
             defaultSubjects.set(data)
             showMessageBox("success","작업 성공","과목을 성공적으로 삭제했습니다")
@@ -131,7 +130,7 @@
         method:"GET",
         credentials:"include",
        })
-       if (response.status===200){
+       if (response.ok){
         const data:{questions_id:number, subjects_name:string, questions_title:string, questions_createdAt:string}[] = await response.json()
         
         ListData = data.filter((item) => item.questions_id !== null && item.questions_id !== undefined) // ✅ id가 없는 데이터 제외
@@ -159,10 +158,10 @@
         <!-- ✅ 과목 선택 및 입력 -->
         <div class="flex flex-col gap-3">
             <select bind:value={selectedSubject} on:change={showQuestionList} class="p-2 border rounded-lg">
+                <option value="기타">새로운 과목</option>
                 {#each $defaultSubjects as subject}
                     <option value={subject}>{subject}</option>
                 {/each}
-                <option value="기타">새로운 과목</option>
             </select>
 
                 <input type="text" bind:value={customSubject} class="p-2 border rounded-lg" placeholder="새 과목명 입력 또는 선택한 과목명 수정" />

@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { answerFormatType } from "../../lib/type/answer";
-    import { answerSheet, correctAnswer, editQuestion } from "../../lib/store/pageStore";
+    import { answerFormatType } from "@lib/type/answer";
+    import { answerSheet, correctAnswer, editQuestion } from "@lib/store/pageStore";
     import { onMount } from "svelte";
 
     export let questionCount: number;

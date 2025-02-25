@@ -1,10 +1,10 @@
 <script lang="ts">
     import AnswerForm from "./AnswerForm.svelte";
-    import { showMessageBox } from "../../lib/custom/customStore";
+    import { showMessageBox } from "@lib/custom/customStore";
     import { onMount } from "svelte";
     import mammoth from "mammoth";
-    import { answerSheet, correctAnswer, editQuestion, viewMain } from "../../lib/store/pageStore";
-    import { questionDataDto } from "../../lib/type/answer";
+    import { answerSheet, correctAnswer, editQuestion, viewMain } from "@lib/store/pageStore";
+    import { questionDataDto } from "@lib/type/answer";
 
 
     // ✅ 파일 업로드 상태
@@ -47,7 +47,7 @@ async function fetchSubject() {
             credentials:"include",
         })
         const data = await response.json()
-        if (response.status===200){
+        if (response.ok){
             subjects = data
         } else {
             const errorData = await response.json()
@@ -84,7 +84,7 @@ if ($editQuestion?.correctAnswer){
             },
             body: JSON.stringify(fetchData)
         });
-        if (response.status===201){
+        if (response.ok){
             showMessageBox("success","업로드 성공","업로드에 성공하였습니다!")
             viewMain.set(null)
             answerSheet.set([])

@@ -1,8 +1,8 @@
 <script lang="ts">
     import Login from "./teacher/Login.svelte";
-    import {teacherInfo} from "../lib/store/userStore" 
+    import {teacherInfo} from "@lib/store/userStore" 
     import TeacherAdmin from "./teacher/TeacherAdmin.svelte";
-    import { showMessageBox } from "../lib/custom/customStore";
+    import { showMessageBox } from "@lib/custom/customStore";
     import { onMount } from "svelte";
 
     async function checkSession() {
@@ -11,7 +11,7 @@
                 method:"GET",
                 credentials:"include"
             })
-            if (response.status===200){
+            if (response.ok){
                 const data = await response.json()
                 teacherInfo.set(data.userId)
             } else{

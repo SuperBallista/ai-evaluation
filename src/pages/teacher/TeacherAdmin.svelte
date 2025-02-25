@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { viewMain } from "../../lib/store/pageStore";
-    import Header from "../../components/Header.svelte";
-    import AddSubject from "../../components/Main/AddSubject.svelte";
-    import Upload from "../../components/Main/Upload.svelte";
-    import Evaluation from "../../components/Main/Evaluation.svelte";
-    import List from "../../components/Main/List.svelte";
+    import { viewMain } from "@lib/store/pageStore";
+    import Header from "@components/Header.svelte";
+    import AddSubject from "@components/main/subject/AddSubject.svelte";
+    import Upload from "@components/main/upload/Upload.svelte";
+    import Evaluation from "@components/main/evaluation/Evaluation.svelte";
+    import List from "@components/main/list/List.svelte";
 
 
 </script>

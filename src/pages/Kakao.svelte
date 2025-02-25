@@ -1,7 +1,7 @@
 <script>
     import { onMount } from "svelte";
-    import { teacherInfo } from "../lib/store/userStore"; // ✅ Store 가져오기
-    import { showMessageBox } from "../lib/custom/customStore";
+    import { teacherInfo } from "@lib/store/userStore"; // ✅ Store 가져오기
+    import { showMessageBox } from "@lib/custom/customStore";
     import { navigate } from "svelte-routing";
     import NotFound from "./NotFound.svelte";
   

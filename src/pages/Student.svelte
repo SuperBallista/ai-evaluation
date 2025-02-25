@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { showMessageBox } from "../lib/custom/customStore";
-    import { answerFormatType } from "../lib/type/answer";
+    import { showMessageBox } from "@lib/custom/customStore";
+    import { answerFormatType } from "@lib/type/answer";
     import NotFound from "./NotFound.svelte";
 
     let params = new URLSearchParams(window.location.search)
@@ -21,7 +21,7 @@
         const response = await fetch(`/api/student?session=${session}`,{
           method:"GET",
         })
-        if (response.status===200){
+        if (response.ok){
           studentList = await response.json()
         } else {
           const data:{message:string} = await response.json()
@@ -44,7 +44,7 @@
           method:"GET",
         })
 
-        if (response.status===200){
+        if (response.ok){
           showMessageBox("success","로딩 중", "답안지를 불러오고 있습니다")
           questions = {...await response.json()}
         } else{
@@ -82,7 +82,7 @@ try{
 
     body:JSON.stringify(fetchData)
   });
-  if (response.status===201){
+  if (response.ok){
     showMessageBox("success", "제출 성공", "답안이 성공적으로 제출되었습니다.");
   } else {
     const data = await response.json();
