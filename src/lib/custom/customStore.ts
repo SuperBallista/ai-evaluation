@@ -1,6 +1,5 @@
 import { writable } from "svelte/store";
-import { get } from "svelte/store";
-
+import defaultColor from "./config/messageBoxColor.json"
 
 export const accessToken = writable<string | null>(null)
 
@@ -47,7 +46,7 @@ export async function authFetch(
 export const messageType = writable<"error" | "confirm" | "alert" | "loading" | "input" | "success" | null>(null);
 export const messageTitle = writable<string>("");
 export const messageContent = writable<string>("");
-export const messageColor = writable<string>("#3498db");
+export const messageColor = writable<string>(defaultColor["default-title-background"]);
 export const messageInputs = writable<{ key: string; label: string; type?: string; placeholder?: string, value: any }[]>([]);
 export const messageResolve = writable<((res: { success: boolean; values?: Record<string, string> }) => void) | null>(null);
 export const messageIcon = writable<string | null>(null); // ✅ 아이콘을 직접 저장
@@ -78,7 +77,7 @@ const messageIcons = {
       messageType.set(type ?? null);
       messageTitle.set(title ?? "제목 없음"); 
       messageContent.set(message ?? "메세지가 없습니다");
-      messageColor.set(color ?? "#1e1e2f");
+      messageColor.set(color ?? defaultColor["default-title-background"]);
 
     // 🟢 입력값을 포함하여 messageInputs에 저장
     messageInputs.set(inputs?.map(input => ({

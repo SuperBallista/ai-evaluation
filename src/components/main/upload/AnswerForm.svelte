@@ -6,24 +6,31 @@
     export let questionCount: number;
 
     export function changeAnswer() {
-        answerSheet.update(() => 
-            answerFormats.map((format, i) => ({
-                format,
-                counts: choiceCounts[i] ?? 2 // ✅ 기본값 2 보장
-            }))
-        );
-        console.log("🔄 변경된 answerSheet:", $answerSheet);
-        correctAnswer.update(() => modelAnswers);
-    }
+    // 배열 크기를 questionCount에 맞게 조정
+    answerFormats = answerFormats.slice(0, questionCount);
+    choiceCounts = choiceCounts.slice(0, questionCount);
+    choices = choices.slice(0, questionCount);
+    modelAnswers = modelAnswers.slice(0, questionCount);
 
-    let answerFormats: answerFormatType[] = $editQuestion?.answerSheet.map(item => item.format) || Array(questionCount).fill("select");
-    let choiceCounts: number[] = $editQuestion?.answerSheet.map(item => item.counts) || Array(questionCount).fill(2); // ✅ 기본값 2로 설정
-    let choices: number[][] = [...Array(questionCount)].map((_, i) => 
-    [...Array(choiceCounts[i] || 2)].map((_, j) => j + 1)
+    answerSheet.update(() => 
+        answerFormats.map((format, i) => ({
+            format,
+            counts: choiceCounts[i] ?? 2 // ✅ 기본값 2 보장
+        }))
     );
-    let modelAnswers: string[] = $editQuestion?.correctAnswer || Array(questionCount).fill("");
+    console.log("🔄 변경된 answerSheet:", $answerSheet);
+    correctAnswer.update(() => modelAnswers);
+}
 
-    function updateAnswerFormat(index: number, event: Event): void {
+let answerFormats: answerFormatType[] = ($editQuestion?.answerSheet.map(item => item.format) || Array(questionCount).fill("select")).slice(0, questionCount);
+let choiceCounts: number[] = ($editQuestion?.answerSheet.map(item => item.counts) || Array(questionCount).fill(2)).slice(0, questionCount);
+let choices: number[][] = [...Array(questionCount)].map((_, i) => 
+    [...Array(choiceCounts[i] || 2)].map((_, j) => j + 1)
+).slice(0, questionCount);
+let modelAnswers: string[] = ($editQuestion?.correctAnswer || Array(questionCount).fill("")).slice(0, questionCount);
+
+
+function updateAnswerFormat(index: number, event: Event): void {
         const target = event.target as HTMLSelectElement;
         if (!target) return;
 
@@ -57,7 +64,7 @@
         <div class="flex flex-col gap-2 mb-4">
             <label class="text-default font-medium">문제 {index + 1}</label>
             
-            <select bind:value={answerFormats[index]} class="p-2 border rounded-lg" on:change={(event) => updateAnswerFormat(index, event)}>
+            <select bind:value={answerFormats[index]} class="p-2 border border-default-color rounded-lg" on:change={(event) => updateAnswerFormat(index, event)}>
                 <option value="select">선택형</option>
                 <option value="input">단답형</option>
                 <option value="textarea">서술형</option>
@@ -66,11 +73,11 @@
             {#if answerFormats[index] === "select"}
                 <div class="flex gap-2 items-center">
                     <label class="text-default font-medium">선택지 개수</label>
-                    <input type="number" min="2" max="10" bind:value={choiceCounts[index]} class="p-2 border rounded-lg w-20"
+                    <input type="number" min="2" max="10" bind:value={choiceCounts[index]} class="p-2 border border-default-color rounded-lg w-20"
                         on:change={(event) => updateChoiceCount(index, event)} />
                 </div>
 
-                <select on:change={() =>changeAnswer()} bind:value={modelAnswers[index]} class="p-2 border rounded-lg">
+                <select on:change={() =>changeAnswer()} bind:value={modelAnswers[index]} class="p-2 border border-default-color rounded-lg">
                     <option value="">정답 선택</option>
                     {#each choices[index] as choice}
                         <option value={choice}>{choice}</option>
@@ -79,11 +86,11 @@
             {/if}
 
             {#if answerFormats[index] === "input"}
-                <input type="text" on:change={()=>changeAnswer()} bind:value={modelAnswers[index]} class="p-2 border rounded-lg" placeholder="정답 입력" />
+                <input type="text" on:change={()=>changeAnswer()} bind:value={modelAnswers[index]} class="p-2 border border-default-color rounded-lg" placeholder="정답 입력" />
             {/if}
 
             {#if answerFormats[index] === "textarea"}
-                <textarea  on:change={()=>changeAnswer()} bind:value={modelAnswers[index]} class="p-2 border rounded-lg" rows="3" placeholder="서술형 정답 입력"></textarea>
+                <textarea  on:change={()=>changeAnswer()} bind:value={modelAnswers[index]} class="p-2 border border-default-color rounded-lg" rows="3" placeholder="서술형 정답 입력"></textarea>
             {/if}
         </div>
     {/each}

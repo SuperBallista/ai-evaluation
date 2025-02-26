@@ -46,18 +46,18 @@ try{
 </script>
 
 <h2 class="text-lg font-semibold text-default mb-2">📌 학생 선택</h2>
-<table class="w-full border-collapse border border-gray-300">
-    <thead class="bg-main-bg2">
-        <tr>
-            <th class="border p-2">번호</th>
-            <th class="border p-2">학생</th>
+<table class="w-full border-collapse border border-default-color ">
+    <thead class="bg-sub2">
+        <tr class="hover-color">
+            <th class=" border border-default-color p-2">번호</th>
+            <th class=" border border-default-color p-2">학생</th>
         </tr>
     </thead>
     <tbody>
         {#each $students as student}
-            <tr>
-                <td class="border p-2 text-center">{student.number}</td>
-                <td class="border p-2 text-center cursor-pointer"
+            <tr class="hover-color">
+                <td class=" border border-default-color p-2 text-center">{student.number}</td>
+                <td class=" border border-default-color p-2 text-center cursor-pointer"
                     class:text-default={$selectedStudents.includes(student.number)}
                     class:font-bold={$selectedStudents.includes(student.number)}
                     class:text-mute={!$selectedStudents.includes(student.number)}

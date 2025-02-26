@@ -1,10 +1,10 @@
-<header class="bg-main text-default border-b border-main-bg3 p-4 flex justify-between items-center">
-    <div on:click={() => {viewMain.set(null)}} class="cursor-pointer text-xl font-bold">학생 평가 간소화 서비스</div>
+<header class="bg-main text-default border-b  p-4 flex justify-between items-center">
+    <div on:click={() => {viewMain.set(null)}} class="cursor-pointer text-xl text-header-color font-bold">학생 평가 간소화 서비스</div>
     <nav class="flex space-x-4">
-      <button on:click={() => {viewMain.set("subject")}} class="cursor-pointer btn-default px-4 py-2 rounded-xl">교과관리</button>
-      <button on:click={() => {viewMain.set("upload"); editQuestion.set(null)}} class="cursor-pointer btn-default px-4 py-2 rounded-xl">평가지 업로드</button>
-      <button on:click={() => {viewMain.set("evaluation")}} class="cursor-pointer btn-default px-4 py-2 rounded-xl">학생평가</button>
-      <button on:click={() => {logout()}} class="cursor-pointer btn-default px-4 py-2 rounded-xl">로그아웃</button>
+      <button on:click={() => {viewMain.set("subject")}} class="cursor-pointer btn-action px-4 py-2 rounded-xl">교과관리</button>
+      <button on:click={() => {viewMain.set("upload"); editQuestion.set(null)}} class="cursor-pointer btn-action px-4 py-2 rounded-xl">평가지 업로드</button>
+      <button on:click={() => {viewMain.set("evaluation")}} class="cursor-pointer btn-action px-4 py-2 rounded-xl">학생평가</button>
+      <button on:click={() => {logout()}} class="cursor-pointer btn-action px-4 py-2 rounded-xl">로그아웃</button>
     </nav>
   </header>
   <script lang="ts">

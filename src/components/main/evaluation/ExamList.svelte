@@ -1,20 +1,20 @@
 <!-- ✅ 평가지 테이블 -->
     <h2 class="text-lg font-semibold text-default mb-4">평가지 목록</h2>
-    <table class="w-full border-collapse border border-gray-300">
-        <thead class="bg-sub3">
-            <tr>
-                <th class="border p-2">평가지 제목</th>
-                <th class="border p-2">작성일</th>
-                <th class="border p-2">반영여부</th>
+    <table class="w-full border-collapse border border-default-color ">
+        <thead class="bg-sub2">
+            <tr class="hover-color">
+                <th class=" border border-default-color p-2">평가지 제목</th>
+                <th class=" border border-default-color p-2">작성일</th>
+                <th class=" border border-default-color p-2">반영여부</th>
             </tr>
         </thead>
         <tbody>
             {#each ListData as data, index}
-                <tr>
-                    <td class="border p-2">
+                <tr class="hover-color">
+                    <td class=" border border-default-color p-2">
                     {data.title}</td>
-                    <td class="border p-2">{checkDateTime(data.date) }</td>
-                    <td class="border p-2 text-center">
+                    <td class=" border border-default-color p-2">{checkDateTime(data.date) }</td>
+                    <td class=" border border-default-color p-2 text-center">
                     <input type="checkbox" on:click={() => inputQuestionID(index)} bind:checked={$checkedData[index]} />
                 </tr>
             {/each}

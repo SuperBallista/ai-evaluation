@@ -157,14 +157,14 @@
 
         <!-- ✅ 과목 선택 및 입력 -->
         <div class="flex flex-col gap-3">
-            <select bind:value={selectedSubject} on:change={showQuestionList} class="p-2 border rounded-lg">
+            <select bind:value={selectedSubject} on:change={showQuestionList} class="p-2 border border-default-color rounded-lg">
                 <option value="기타">새로운 과목</option>
                 {#each $defaultSubjects as subject}
                     <option value={subject}>{subject}</option>
                 {/each}
             </select>
 
-                <input type="text" bind:value={customSubject} class="p-2 border rounded-lg" placeholder="새 과목명 입력 또는 선택한 과목명 수정" />
+                <input type="text" bind:value={customSubject} class="p-2 border border-default-color rounded-lg" placeholder="새 과목명 입력 또는 선택한 과목명 수정" />
 
             <div class="flex gap-2">
                 <button on:click={addOrUpdateSubject} class="cursor-pointer px-4 py-2 btn-default text-white rounded-lg">

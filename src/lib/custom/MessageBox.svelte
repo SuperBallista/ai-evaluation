@@ -7,9 +7,9 @@
     import InputBox from "./InputBox.svelte";
     import LoadingSpinner from "./LoadingSpinner.svelte";
     import messageBoxColor from "./config/messageBoxColor.json"
+
   
    let inputValues: Record<string, string> = {}
-      let confirmButton: HTMLButtonElement;
 
     function confirm(success: boolean) {
       if ($messageResolve) {
@@ -33,7 +33,8 @@
       confirmButton.focus();
     }
     });
-  
+    let confirmButton: HTMLButtonElement;
+
     onDestroy(() => {
       window.removeEventListener("keydown", handleKey);
     });
@@ -67,11 +68,27 @@
         {#if $messageType !== "loading" && $messageType !== "success"}
           <div class="footer">
             {#if $messageType === "confirm" || $messageType === "input"}
-              <button class="button confirm-btn" on:click={() => confirm(true)}>확인</button>
-              <button class="button cancel-btn" on:click={() => confirm(false)}>취소</button>
-            {:else}
-            <button class="button confirm-btn" bind:this={confirmButton} on:click={() => confirm(true)}>확인</button>
-            {/if}
+            <button
+            class="button btn-default"
+            style="--btn-default: {messageBoxColor['btn-default']}; --btn-default-hover: {messageBoxColor['btn-default-hover']}; --btn-text: {messageBoxColor['btn-text']};"
+            on:click={() => confirm(true)}>
+            확인
+          </button>
+          <button
+          class="button btn-cancel"
+          style="--btn-cancel: {messageBoxColor['btn-cancel']}; --btn-cancel-hover: {messageBoxColor['btn-cancel-hover']}; --btn-text: {messageBoxColor['btn-text']};"
+          on:click={() => confirm(false)}>
+          취소
+        </button>
+        {:else}
+        <button
+        class="button btn-default"
+        style="--btn-default: {messageBoxColor['btn-default']}; --btn-default-hover: {messageBoxColor['btn-default-hover']}; --btn-text: {messageBoxColor['btn-text']};"
+        bind:this={confirmButton}
+        on:click={() => confirm(true)}>
+        확인
+      </button>
+           {/if}
           </div>
         {/if}
       </div>
@@ -125,23 +142,27 @@
       cursor: pointer;
       font-size: 14px;
       transition: 0.2s;
+      color: var(--btn-text)
     }
+
+
+    .btn-default {
+    background-color: var(--btn-default);
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .btn-default:hover {
+    background-color: var(--btn-default-hover);
+  }
   
-    .confirm-btn {
-      background: #27ae60;
-      color: white;
-    }
   
-    .confirm-btn:hover {
-      background: #219150;
-    }
-  
-    .cancel-btn {
-      background: #e74c3c;
-      color: white;
-    }
-  
-    .cancel-btn:hover {
-      background: #c0392b;
-    }
+  .btn-cancel {
+    background-color: var(--btn-cancel);
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .btn-cancel:hover {
+    background-color: var(--btn-cancel-hover);
+  }
+
   </style>

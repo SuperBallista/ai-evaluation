@@ -3,13 +3,13 @@
     import { showMessageBox } from "@lib/custom/customStore";
     import { onMount } from "svelte";
     import mammoth from "mammoth";
-    import { answerSheet, correctAnswer, editQuestion, viewMain } from "@lib/store/pageStore";
+    import { answerSheet, cleanText, correctAnswer, editQuestion, viewMain } from "@lib/store/pageStore";
     import { questionDataDto } from "@lib/type/answer";
 
 
     // ✅ 파일 업로드 상태
     let file: File | null = null;
-    let extractedText: string = $editQuestion?.content || "";
+    let extractedText: string = cleanText($editQuestion?.content) || "";
 
     function handleFileUpload(event: Event): void {
         const target = event.target as HTMLInputElement;
@@ -29,7 +29,7 @@
             if (!event.target) return;
             const arrayBuffer = event.target.result as ArrayBuffer;
             const result = await mammoth.extractRawText({ arrayBuffer });
-            extractedText = result.value;
+            extractedText = cleanText(result.value);
         };
     }
 
@@ -118,24 +118,24 @@ if ($editQuestion?.correctAnswer){
         <!-- ✅ 파일 업로드 -->
         <div class="mb-4">
             <label class="block text-default font-medium">문제 파일 업로드(docx 형식)</label>
-            <input type="file" accept=".docx" class="w-full mt-2 p-2 border rounded-lg" on:change={handleFileUpload} />
+            <input type="file" accept=".docx" class="w-full mt-2 p-2 border border-default-color rounded-lg" on:change={handleFileUpload} />
         </div>
         
         {#if extractedText}
         <div class="mb-4">
-        <textarea bind:value={extractedText} rows=10 class="w-full p-2 border rounded-lg"></textarea>
+        <textarea bind:value={extractedText} rows=10 class="w-full p-2 border border-default-color rounded-lg"></textarea>
         </div>
         {/if}
         <!-- ✅ 제목 입력 -->
         <div class="mb-4">
             <label class="block text-default font-medium">제목</label>
-            <input type="text" bind:value={title} class="w-full mt-2 p-2 border rounded-lg" placeholder="시험 제목을 입력하세요" />
+            <input type="text" bind:value={title} class="w-full mt-2 p-2 border border-default-color rounded-lg" placeholder="시험 제목을 입력하세요" />
         </div>
 
         <!-- ✅ 과목 선택 -->
         <div class="mb-4">
             <label class="block text-default font-medium">과목 선택</label>
-            <select bind:value={selectedSubject} class="w-full mt-2 p-2 border rounded-lg">
+            <select bind:value={selectedSubject} class="w-full mt-2 p-2 border border-default-color rounded-lg">
                 {#each subjects as subject}
                     <option value={subject}>{subject}</option>
                 {/each}
@@ -145,14 +145,14 @@ if ($editQuestion?.correctAnswer){
         <!-- ✅ 문제 갯수 설정 -->
         <div class="mb-4">
             <label class="block text-default font-medium">문제 갯수</label>
-            <input type="number" bind:value={questionCount} min="1" class="w-full mt-2 p-2 border rounded-lg" />
+            <input type="number" bind:value={questionCount} min="1" class="w-full mt-2 p-2 border border-default-color rounded-lg" />
         </div>
 
         <!-- ✅ 문항 입력 컴포넌트 -->
         <AnswerForm questionCount={questionCount}  />
 
         <!-- ✅ 저장 버튼 -->
-        <button on:click={saveData} class="cursor-pointer w-full px-4 py-2 btn-accent rounded-lg mt-4">
+        <button on:click={saveData} class="cursor-pointer w-full px-4 py-2 btn-action rounded-lg mt-4">
             저장
         </button>
     </div>

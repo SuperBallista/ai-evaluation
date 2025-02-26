@@ -1,33 +1,33 @@
 <!-- ✅ 평가지 테이블 -->
 <div class="max-w-2xl w-full bg-main-bg3 shadow-md rounded-lg p-6 mt-6">
     <h2 class="text-lg font-semibold text-default mb-4">평가지 목록</h2>
-    <table class="w-full border-collapse border border-gray-300">
-        <thead class="bg-sub3">
-            <tr>
-                <th class="border p-2">평가지 제목</th>
-                <th class="border p-2">작성일</th>
-                <th class="border p-2">풀기</th>
-                <th class="border p-2">수정</th>
-                <th class="border p-2">삭제</th>
+    <table class="w-full border-collapse border border-default-color ">
+        <thead class="bg-sub2">
+            <tr class="hover-color">
+                <th class=" border border-default-color p-2">평가지 제목</th>
+                <th class=" border border-default-color p-2">작성일</th>
+                <th class=" border border-default-color p-2">풀기</th>
+                <th class=" border border-default-color p-2">수정</th>
+                <th class=" border border-default-color p-2">삭제</th>
             </tr>
         </thead>
         <tbody>
             {#each ListData as data}
-                <tr>
-                    <td class="border p-2">{data.title}</td>
-                    <td class="border p-2">{ checkDateTime(data.date) }</td>
-                    <td class="border p-2 text-center">
-                        <button on:click={() => openEvaluation(data.id)} class="cursor-pointer px-3 py-1 text-default rounded-md btn-accent">
+                <tr class="hover-color">
+                    <td class=" border border-default-color p-2">{data.title}</td>
+                    <td class=" border border-default-color p-2">{ checkDateTime(data.date) }</td>
+                    <td class=" border border-default-color p-2 text-center">
+                        <button on:click={() => openEvaluation(data.id)} class="cursor-pointer px-3 py-1 rounded-md btn-action">
                             풀기
                         </button>
                     </td>
-                    <td class="border p-2 text-center">
-                        <button on:click={() => editEvaluation(data.id)} class="cursor-pointer px-3 py-1 text-default rounded-md btn-default">
+                    <td class=" border border-default-color p-2 text-center">
+                        <button on:click={() => editEvaluation(data.id)} class="cursor-pointer px-3 py-1 rounded-md btn-default">
                             수정
                         </button>
                     </td>
-                    <td class="border p-2 text-center">
-                        <button on:click={() => deleteEvaluation(data.id)} class="cursor-pointer px-3 py-1 text-default rounded-md btn-default">
+                    <td class=" border border-default-color p-2 text-center">
+                        <button on:click={() => deleteEvaluation(data.id)} class="cursor-pointer px-3 py-1 rounded-md btn-accent">
                             삭제
                         </button>
                     </td>

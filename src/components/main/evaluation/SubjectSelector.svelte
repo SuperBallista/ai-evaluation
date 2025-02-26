@@ -73,7 +73,7 @@
 
         <!-- ✅ 과목 선택 및 입력 -->
         <div class="flex flex-col gap-3">
-            <select bind:value={selectedSubject} on:change={showQuestionList} class="p-2 border rounded-lg">
+            <select bind:value={selectedSubject} on:change={showQuestionList} class="p-2 border border-default-color rounded-lg">
                 <option value="">과목 선택</option>
                 {#each $defaultSubjects as subject}
                     <option value={subject}>{subject}</option>

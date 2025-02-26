@@ -1,6 +1,11 @@
 @import "tailwindcss";
+@import url("https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css");
 
+body {
+  font-family: "Pretendard", sans-serif;
+}
 
+/* 메인 컬러는 유지 */
 .bg-main {
   background-color: #8D6E63; /* 메인 브라운 */
 }
@@ -10,51 +15,72 @@
 }
 
 .bg-sub2 {
-  background-color: #A1887F; /* 연한 브라운 */
+  background-color: #E8DED8 ; /* 연한 브라운 */
 }
 
-.bg-sub3 {
-  background-color: #D7CCC8; /* 베이지 */
+.hover-color:hover {
+  background-color:#E0D6C8 ; /* 베이지 */
 }
 
+/* 배경 색상을 더 밝고 채도가 낮은 미색으로 변경 */
 .bg-main-bg1 {
-  background-color: #FFF8E1; /* 크림톤 */
+  background-color: #FCFAF5; /* 아주 연한 크림톤 */
 }
 
 .bg-main-bg2 {
-  background-color: #F5E1DA; /* 밝은 베이지 */
+  background-color: #F5F3EE; /* 밝은 베이지 */
 }
 
 .bg-main-bg3 {
-  background-color: #E0D7C6; /* 중간 베이지 */
+  background-color: #EDE8E2; /* 중간 베이지 */
 }
 
+/* 텍스트 색상 */
 .text-default {
-  color: #2E2E2E; /* 깊은 브라운 */
+  color: #3D3D3D; /* 다크 그레이 */
 }
 
 .text-mute {
-  color: #A0A0A0 ; /* 흐린 브라운 */
+  color: #B0B0B0; /* 연한 브라운 */
 }
 
 .text-accent {
-  color: #D84315; /* 강조 오렌지 레드 */
+  color: #C75C3E; /* 강조 톤 다운된 레드 */
 }
 
+/* 버튼 스타일 */
 .btn-accent {
-  background-color: #D84315; /* 강조 버튼 (딥 오렌지) */
-  color: #2E2E2E;
+  background-color: #C75C3E; /* 강조 버튼 (소프트 레드) */
+  color: #FAF8F4; /* 밝은 톤 버튼 텍스트 */
 }
 
 .btn-accent:hover {
-  background-color: #BF360C; /* 강조 버튼 마우스 오버 */
+  background-color: #B0492E; /* 강조 버튼 마우스 오버 */
 }
 
 .btn-default {
-  background-color: #8D6E63; /* 일반 버튼 (메인 브라운) */
-  color: #2E2E2E;
+  background-color: #C0C0C0;
+  color: #FAF8F4;
+}
+.btn-default:hover{
+  background-color: #909090;
 }
 
-.btn-default:hover {
+.btn-action {
+  background-color: #8D6E63;
+  color: #FAF8F4
+}
+
+.btn-action:hover {
   background-color: #6D4C41; /* 일반 버튼 마우스 오버 */
+}
+
+
+/* 테두리 색상 */
+.border-default-color {
+  border-color: #D0D0D0; /* 연한 그레이 */
+}
+
+.text-header-color{
+  color: #FAF8F4; /* 밝은 톤 버튼 텍스트 */
 }

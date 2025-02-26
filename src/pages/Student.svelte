@@ -13,6 +13,11 @@
     let answer: string[]=[];
 
 
+    function findStudent(number:number){
+     return studentList.find(item => item.number===number)
+    }
+
+
     async function fetchStudent() {
       if (!session){
         return
@@ -70,13 +75,13 @@ async function fetchAnswer() {
     return;
   }
   const fetchData = {
-    questionsId: id,
+    questionsUuid: id,
     session,
     student:selectedStudent,
     answer
   };
 try{
-  const response = await fetch("/api/submit",{
+  const response = await fetch("/api/student/submit",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
 
@@ -106,25 +111,25 @@ try{
     <!-- ✅ 시험지 기본 정보 입력 -->
     <div class="mb-4">
       <label class="block text-default font-medium">반번호</label>
-      <input type="number" bind:value={selectedStudent} class="p-2 border border-gray-300 rounded-lg w-full mt-1"/>
+      <input type="number" bind:value={selectedStudent} class="p-2 border border-default-color  rounded-lg w-full mt-1"/>
       </div>
   
     <div class="mb-4">
-      <span class="p-2 border border-gray-300 rounded-lg w-full mt-1">
-        {studentList[selectedStudent] ? studentList[selectedStudent].name : "반번호를 바르게 입력하세요"}
+      <span class="p-2 border border-default-color  rounded-lg w-full mt-1">
+        {findStudent(selectedStudent)?.name || "반번호를 바르게 입력하세요"}
     </span>
         </div>
   
-    <hr class="border-main-bg2 my-4" />
+    <hr class=" my-4" />
   
     <!-- ✅ 동적으로 생성된 문제 입력 필드 -->
     {#each questions.answerSheet as question, index}
-      <div class="mb-6 p-4 border rounded-lg bg-main-bg2">
+      <div class="mb-6 p-4 border border-default-color rounded-lg bg-main-bg2">
         <label class="block text-default font-medium mb-2">문제 {index+1}</label>
   
         <!-- ✅ 선택형 (Select) -->
         {#if question.format === "select" && question.counts}
-          <select bind:value={answer[index]} class="p-2 border border-gray-300 rounded-lg w-full">
+          <select bind:value={answer[index]} class="p-2 border border-default-color  rounded-lg w-full">
               {#each Array.from({ length: question.counts }, (_, i) => i + 1) as option}
                   <option value={option}>{option}</option>
               {/each}
@@ -132,11 +137,11 @@ try{
   
         <!-- ✅ 단답형 (Input) -->
         {:else if question.format === "input"}
-          <input bind:value={answer[index]} type="text" class="p-2 border border-gray-300 rounded-lg w-full" placeholder="정답 입력" />
+          <input bind:value={answer[index]} type="text" class="p-2 border border-default-color  rounded-lg w-full" placeholder="정답 입력" />
   
         <!-- ✅ 서술형 (Textarea) -->
         {:else if question.format === "textarea"}
-          <textarea bind:value={answer[index]} class="p-2 border border-gray-300 rounded-lg w-full" rows="5" placeholder="서술형 정답 입력"></textarea>
+          <textarea bind:value={answer[index]} class="p-2 border border-default-color  rounded-lg w-full" rows="5" placeholder="서술형 정답 입력"></textarea>
         {/if}
       </div>
     {/each}

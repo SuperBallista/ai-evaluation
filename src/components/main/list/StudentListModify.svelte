@@ -66,32 +66,30 @@ onMount(() => {
 
 <div class="max-w-2xl w-full bg-main-bg3 shadow-md rounded-lg p-6 mt-6">
     <h2 class="text-lg font-semibold text-default mb-4">평가 학생 명단</h2>
-    <table class="w-full border-collapse border border-gray-300">
-        <thead class="bg-sub3">
-            <tr>
-                <th class="border p-2">번호</th>
-                <th class="border p-2">이름</th>
-                <th class="border p-2">삭제</th>
+    <table class="w-full border-collapse border border-default-color ">
+        <thead class="bg-sub2">
+            <tr class="hover-color">
+                <th class=" border border-default-color p-2">번호</th>
+                <th class=" border border-default-color p-2">이름</th>
+                <th class=" border border-default-color p-2">삭제</th>
             </tr>
         </thead>
         <tbody>
             {#each allStudentList, i}
-            <tr>
-                <td class="border p-2">
-                    <input type="number" min=1 bind:value={allStudentList[i].number} class="w-full p-1 border rounded text-center" />
+            <tr class="hover-color">
+                <td class=" border border-default-color p-2">
+                    <input type="number" min=1 bind:value={allStudentList[i].number} class="w-full p-1 border border-default-color rounded text-center" />
                 </td>
-                <td class="border p-2">
-                    <input type="text" bind:value={allStudentList[i].name} class="w-full p-1 border rounded" />
+                <td class=" border border-default-color p-2">
+                    <input type="text" bind:value={allStudentList[i].name} class="w-full p-1 border border-default-color rounded" />
                 </td>
-                <td class="border p-2">
+                <td class=" border border-default-color p-2">
                     <button on:click={() => {deleteStudent(allStudentList[i].number)}} class="btn-default text-default px-4 py-2 rounded-lg cursor-pointer">삭제</button>
                 </td>
             </tr>
         {/each}
-        <tr>
-            <td colspan="3"><button on:click={addStudent} class="w-full btn-default text-default px-4 py-2 rounded-lg cursor-pointer">학생추가</button></td>
-        </tr>
     </tbody>
     </table>
-    <button on:click={saveData} class="w-full btn-accent text-default px-4 py-2 rounded-lg cursor-pointer">변경사항 저장</button>
+        <button on:click={addStudent} class="w-full btn-default px-4 py-2 rounded-lg cursor-pointer">학생추가</button>
+        <button on:click={saveData} class="w-full btn-action px-4 py-2 rounded-lg cursor-pointer">변경사항 저장</button>
 </div>
