@@ -11,15 +11,19 @@ export const studentFeedbacks = writable<{ name: string; number: number }[]>([])
 export const feedbackResult = writable<string[]>([]);
 
 
-    let completeFetch = 0
-    let totalFetch = $selectedQuestionID.length + $selectedStudents.length + 1
     export let maxLength:number
     export let remainingTokens:number
-    
+
+    // 함수 밖에서도 진행도 확인을 위해 밖에서 선언
+   let  totalFetch = $selectedQuestionID.length * $selectedStudents.length
+   let  completeFetch = 0
+
 
     async function requestFeedback() {
-    if ($selectedStudents.length === 0) {
-        showMessageBox("alert", "미입력 오류", "평가를 생성하려면 최소 한 명의 학생이 선택되어야 합니다");
+     totalFetch = $selectedQuestionID.length * $selectedStudents.length
+     completeFetch = 0
+    if (totalFetch === 0) {
+        showMessageBox("alert", "미입력 오류", "평가를 생성하려면 최소 한명 이상의 학생과 하나 이상의 평가지를 선택해야합니다");
         return;
     }
 
@@ -37,35 +41,26 @@ export const feedbackResult = writable<string[]>([]);
         question: [...$selectedQuestionID]
     };
 
-    totalFetch = fetchData.question.length + fetchData.students.length + 1;
     showMessageBox("loading", "요청 진행중", `학생 평가서 작성을 요청하고 있습니다: 진행률 ${Math.floor(completeFetch / totalFetch * 100)}%`);
 
-    let nextProcess = true;
-
     try {
-        if (completeFetch === 0) {
-            const success = await fetchBeforePrompt();
-            if (!success) {
-                nextProcess = false;
-                return;
-            }
-        }
+        for (const student of fetchData.students) {
+            let questionIndex = 1
+            let isLastQuestion = false
+            for (const question of fetchData.question) {
+                // 문항이 마지막일 경우 마지막임을 알림 - 최종 학생 피드백 받아야함
+               if (questionIndex === fetchData.question.length) {isLastQuestion=true}
 
-        for (const element of fetchData.question) {
-            if (completeFetch >= totalFetch) break;
-            const success = await fetchQuestionInfo(element);
-            if (!success) continue;
-            completeFetch += 1;
-        }
+                const success = await fetchQuestionStudentAnswerInfo(student, question, maxLength,isLastQuestion);
+                if (!success) {
+                showMessageBox("error", "오류 발생", `${student}번 학생의 풀이를 전송 중 에러가 발생하였습니다`);
+                return; // 🔴 실패하면 전체 요청 중단
+                }
 
-        if (!nextProcess) return;
-
-        for (const element of fetchData.students) {
-            if (completeFetch >= totalFetch) break;
-            const success = await fetchStudentAnswerInfo(element);
-            if (!success) continue;
-            completeFetch += 1;
-        }
+                completeFetch += 1;
+                questionIndex += 1;
+                }
+                }
 
     } catch (error) {
         console.error("Error during requestFeedback:", error);
@@ -74,61 +69,24 @@ export const feedbackResult = writable<string[]>([]);
         if ($messageType === "loading") {
             closeMessageBox();
         }
-
         try {
             remainingTokens = await checkRemainTokens();
         } catch (tokenError) {
             console.error("Error checking remaining tokens:", tokenError);
         }
     }
-}
-
-    async function fetchBeforePrompt() {
-        try{
-            const response = await fetch(`/api/llm?maxLength=${maxLength}`,{
-                method: "GET",
-                credentials: "include"
-            })
-            if (response.ok){
-                return true
-            } else {
-                const data = await response.json()
-                showMessageBox("error","오류 발생", data.message)
-                return false
-            }
-        }
-        catch (error){
-        showMessageBox("error", "에러 발생", "사전 프롬프트 전송 중 서버 오류가 발생하였습니다 :" + error)
-        return false
-        }    
     }
 
-async function fetchQuestionInfo(QuestionId:number) {
-    try{
-        const response = await fetch("/api/llm/question?id="+QuestionId,{
-            method:"GET",
-            credentials:"include"
-        })
-        if (response.ok){
-            selectedQuestionID.update(selectedId => selectedId.filter(id => id != QuestionId));
-            return true
-        } else {
-          const data = await response.json()
-            showMessageBox("error","오류 발생", data.message)
-            return false
-        }
-    } catch (error){
-        showMessageBox("error", "에러 발생", "문항 전송 중 서버 오류가 발생하였습니다 :" + error)
-        return false
-    }
-}
-
-
-async function fetchStudentAnswerInfo(studentId: number) {
+async function fetchQuestionStudentAnswerInfo(studentId: number, questionId:number,  maxLength:number,isLastQuestion:boolean ) {
+    const fetchData = {studentNumber: studentId, questionId, maxLength, isLastQuestion}
     try {
-        const response = await fetch("/api/llm/student?id=" + studentId, {
-            method: "GET",
-            credentials: "include"
+        const response = await fetch(`/api/llm/student`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify(fetchData)
         });
 
         const contentType = response.headers.get("content-type") || "";
@@ -150,6 +108,8 @@ async function fetchStudentAnswerInfo(studentId: number) {
             data = await response.text();
         }
 
+        // 마지막 학생인 경우 교과학습발달상황 기록
+        if (isLastQuestion){
         studentFeedbacks.update(feedbacks => {
             const index = feedbacks.findIndex(student => student.number === studentId);
             if (index !== -1) {
@@ -158,22 +118,25 @@ async function fetchStudentAnswerInfo(studentId: number) {
                 feedbackResult.set(newFeedbackResult); // ✅ 반응형 업데이트
             }
             return feedbacks;
+            
         });
-
+        // 이미 기록된 학생은 목록에서 자동 삭제
         selectedStudents.update(selectedId => selectedId.filter(id => id !== studentId));
+    }
         return true;
     } catch (error) {
-        showMessageBox("error", "에러 발생", "답안 전송 중 서버 오류가 발생하였습니다 :" + error);
+        showMessageBox("error", "에러 발생", "요청 전송 중 서버 오류가 발생하였습니다 :" + error);
         return false;
     }
 }
 
 
-onMount(() => {
+onMount(async() => {
     studentFeedbacks.set($selectedStudents.map(studentId => {
         const student = $students.find(s => s.number === studentId);
         return student ? { name: student.name, number: student.number } : { name: "알 수 없음", number: studentId };
     }));
+   await requestFeedback();
 });
 
 </script>
