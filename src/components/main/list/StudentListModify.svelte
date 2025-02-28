@@ -13,7 +13,8 @@ try{
         method:"GET"
     })
     if(response.ok){
-    allStudentList = await response.json() || []
+    const data = await response.json();
+    allStudentList = data || null;
     }  else{
         const errorData = await response.json()
         showMessageBox("error","에러 발생", errorData.message);
