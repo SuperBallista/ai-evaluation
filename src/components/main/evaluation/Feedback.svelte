@@ -90,7 +90,7 @@ async function fetchQuestionStudentAnswerInfo(studentId: number, questionId:numb
         });
 
         const contentType = response.headers.get("content-type") || "";
-        if (!response.ok) {
+        if (!response.ok) {            
             if (contentType.includes("application/json")) {
                 const errorData = await response.json();
                 showMessageBox("error", "오류 발생", errorData.message);
@@ -103,7 +103,7 @@ async function fetchQuestionStudentAnswerInfo(studentId: number, questionId:numb
 
         let data;
         if (contentType.includes("application/json")) {
-            data = await response.json();
+            data = await response.json()
         } else {
             data = await response.text();
         }

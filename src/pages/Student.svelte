@@ -5,8 +5,7 @@
     import NotFound from "./NotFound.svelte";
 
     let params = new URLSearchParams(window.location.search)
-    let id = params.get("id");
-    let session = params.get("session");
+    let token = params.get("token");
     let questions:{title:string,answerSheet:{format:answerFormatType,counts?:number}[]} = {title:"",answerSheet:[]}
     let selectedStudent:number
     let studentList:{number:number, name:string}[] = []
@@ -19,11 +18,11 @@
 
 
     async function fetchStudent() {
-      if (!session){
+      if (!token){
         return
       }
       try{
-        const response = await fetch(`/api/student?session=${session}`,{
+        const response = await fetch(`/api/student/input?token=${token}`,{
           method:"GET",
         })
         if (response.ok){
@@ -39,13 +38,13 @@
     }
 
     async function fetchQuestion() {
-        if (!id || !session) 
+        if (!token) 
         {
             showMessageBox("error","에러 발생", "평가지를 찾을 수 없습니다");
             return
         }
       try{
-        const response = await fetch(`/api/question/answer?id=${id}&session=${session}`,{
+        const response = await fetch(`/api/question/answer?token=${token}`,{
           method:"GET",
         })
 
@@ -70,13 +69,12 @@ await fetchStudent();
 });
 
 async function fetchAnswer() {
-  if (!id || !session || selectedStudent === undefined) {
+  if (!token || selectedStudent === undefined) {
     showMessageBox("error", "에러 발생", "필수 데이터가 부족합니다");
     return;
   }
   const fetchData = {
-    questionsUuid: id,
-    session,
+    token:token,
     student:selectedStudent,
     answer
   };
@@ -102,7 +100,7 @@ try{
   <svelte:head>
     <title>평가지 답안</title> 
    </svelte:head> 
-{#if !id || !session}
+{#if !token}
 <NotFound/>
 {:else}
   <div class="max-w-3xl w-full mx-auto bg-main-bg3 shadow-lg rounded-lg p-6 mt-6">
@@ -147,7 +145,7 @@ try{
     {/each}
   
     <!-- ✅ 제출 버튼 -->
-    <button on:click={fetchAnswer} class="cursor-pointer w-full text-default py-2 rounded-lg mt-4 btn-accent">
+    <button on:click={fetchAnswer} disabled={!findStudent(selectedStudent)} class="cursor-pointer w-full text-default py-2 rounded-lg mt-4 btn-accent">
       제출하기
     </button>
   </div>
